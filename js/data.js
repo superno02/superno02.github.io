@@ -41,6 +41,8 @@ const RESUME_DATA = {
   ],
   contact: {
     email: "superno02@hotmail.com",
+    emailFlavor: "召喚信鴿",
     linkedin: "https://www.linkedin.com/in/%E5%AE%8F%E7%9B%8A-%E9%A1%8F-0a3931133/",
+    linkedinFlavor: "冒險者公會檔案",
   },
 };
