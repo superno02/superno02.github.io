@@ -8,11 +8,14 @@ Ant（iOS 工程師，10+ 年資歷）的自我介紹求職履歷網站。
 繁體中文內容、網頁 RPG 遊戲風格，發布到 GitHub Pages（`<帳號>.github.io`）成為公開對外網頁。
 
 設計文件：`docs/superpowers/specs/2026-07-08-resume-site-design.md`
+改版設計：`docs/superpowers/specs/2026-07-08-resume-redesign-mystic-blue-design.md`（幽藍魔導視覺改版）
 
 ## 技術棧
 
-- 純 HTML / CSS / JavaScript（ES6+），**零 build 工具、零外部依賴**
-- 新增任何依賴（框架、函式庫、CDN 引用）前必須先問使用者
+- 純 HTML / CSS / JavaScript（ES6+），**零 build 工具**
+- 允許直接引用外部公開資源（CDN 上的字型、函式庫等），不必事先詢問
+  （2026-07-08 使用者放寬；引用時選穩定大型服務如 Google Fonts、jsDelivr）
+- 需要安裝或 build 步驟的依賴（npm、打包工具等）仍必須先問使用者
 
 ## 檔案結構與職責
 
@@ -54,6 +57,9 @@ grep -rnE "09[0-9]{2}[- ]?[0-9]{3}[- ]?[0-9]{3}|line[I]D|line [I]D" \
 |---|---|
 | 要新增／修改履歷內容（學經歷、技能、聯絡方式） | `update-content` |
 | 要發布或更新 GitHub Pages 網頁 | `deploy` |
+| 要改版、重設計版面或提升介面設計品質 | `frontend-design`（內建） |
+| 要快速換整體配色／字體主題 | `theme-factory`（內建） |
+| 要產出靜態視覺圖（分享圖、海報 PNG/PDF） | `canvas-design`（內建） |
 
 ## 完成前檢查清單（每次改動後逐項回報「通過／不適用」）
 
