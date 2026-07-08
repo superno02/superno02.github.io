@@ -14,6 +14,11 @@ description: Use when 要把履歷網站發布到 GitHub Pages——首次部署
 1. 隱私掃描（命令見專案 CLAUDE.md「常用命令」）→ 輸出必須為空
 2. `git status` → 確認沒有 `*.pdf`、`backups/`、`docs/superpowers/` 被 staged
 3. CLAUDE.md「完成前檢查清單」逐項通過
+4. **快取破壞（cache busting）**：若本次改動包含 `css/` 或 `js/` 檔案，必須同步遞增
+   `index.html` 中三個資源引用的 `?v=` 版本號（格式 `?v=YYYYMMDD-N`，三處同值）。
+   原因：GitHub Pages 資源快取 `max-age=600`，不改版本號的話，部署後 10 分鐘內
+   回訪者會拿到「新 HTML＋快取舊 JS/CSS」混版，舊 JS 對新 DOM 可能直接崩潰
+   （2026-07-08 幽藍魔導改版實際發生過）
 
 ## 首次部署（repo 還不存在時）
 
