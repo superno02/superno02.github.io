@@ -10,6 +10,14 @@ description: Use when 需要新增、修改或刪除履歷網站的內容——�
 **內容只住在 `js/data.js` 一個檔案裡。** 改內容絕不碰 `index.html`、`css/`、`js/main.js`；
 如果發現需要動版面才能放進新內容，先停下來回報使用者，不要順手改版面。
 
+**唯一例外（no-JS fallback 同步）**：`index.html` 內有幾處靜態文字是給不執行 JS 時看的 fallback，main.js 平常會用 `data.js` 的值覆寫它們。改到對應欄位時，必須同步更新：
+
+- 改 `about.intro` → 同步把 `#intro-text` 的內文改成與 `data.js` 完全同文（保留其中的 `<span class="cursor">▌</span>`）
+- 改 `about.level` → 同步更新 `#char-level`（格式為 `Lv.<level>`）
+- 改 `about.title` → 同步更新 `#char-title` 的靜態文字
+
+除了這三個 fallback 欄位以外，仍然絕不碰 `index.html` 其他部分。
+
 ## 流程
 
 1. 讀 `js/data.js`，找到對應的資料區塊（skills / experience / about / contact）
