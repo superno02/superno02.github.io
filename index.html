@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Ant — iOS App 開發工程師的個人履歷" />
+  <title>Ant — iOS App 開發工程師</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="frame">
+    <header class="panel char-panel">
+      <h1 id="char-name">Ant</h1>
+      <p id="char-title">iOS App 開發工程師</p>
+      <p id="char-meta"><!-- Lv / location filled by main.js --></p>
+    </header>
+
+    <section class="panel dialog" aria-label="自我介紹">
+      <p id="intro-text"><span class="cursor">▌</span></p>
+    </section>
+
+    <nav class="menu" aria-label="分頁選單">
+      <button class="menu-btn active" data-tab="skills" type="button">個人技能</button>
+      <button class="menu-btn" data-tab="experience" type="button">公司經歷</button>
+    </nav>
+
+    <main>
+      <section id="tab-skills" class="panel tab active" aria-label="個人技能">
+        <h2>SKILLS</h2>
+        <ul id="skill-list"></ul>
+      </section>
+      <section id="tab-experience" class="panel tab" aria-label="公司經歷">
+        <h2>QUEST LOG</h2>
+        <ol id="quest-log"></ol>
+      </section>
+    </main>
+
+    <footer class="panel contact">
+      <h2>CONTACT</h2>
+      <p id="contact-links"></p>
+    </footer>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

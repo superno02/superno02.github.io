@@ -1,0 +1,106 @@
+/* Pixel RPG theme — dark palette, hard edges, no blur, no rounded corners */
+:root {
+  --bg: #1a1c2c;
+  --panel: #262b44;
+  --fg: #f4f4f4;
+  --dim: #a0a8c0;
+  --accent: #ffd866; /* gold */
+  --hp: #6ecb63;     /* green bars */
+  --border: #f4f4f4;
+  --shadow: #0f1020;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { background: var(--bg); }
+
+body {
+  color: var(--fg);
+  /* monospace stack keeps the 8-bit feel without external fonts */
+  font-family: "Courier New", "Microsoft JhengHei", monospace;
+  line-height: 1.7;
+  image-rendering: pixelated;
+  padding: 16px;
+}
+
+.frame { max-width: 720px; margin: 0 auto; display: grid; gap: 16px; }
+
+/* Pixel panel: double hard border + offset hard shadow */
+.panel {
+  background: var(--panel);
+  border: 4px solid var(--border);
+  outline: 4px solid var(--shadow);
+  box-shadow: 8px 8px 0 var(--shadow);
+  padding: 16px;
+}
+
+h1 { color: var(--accent); font-size: 1.6rem; letter-spacing: 2px; }
+h2 { color: var(--accent); font-size: 1rem; letter-spacing: 4px; margin-bottom: 12px; }
+#char-title { color: var(--fg); }
+#char-meta { color: var(--dim); font-size: 0.9rem; }
+
+/* Dialog box with blinking cursor, like an RPG text window */
+.dialog { min-height: 96px; }
+.cursor { animation: blink 1s steps(1) infinite; color: var(--accent); }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Menu buttons — game menu look, ▶ marker on the active one */
+.menu { display: flex; gap: 12px; }
+.menu-btn {
+  flex: 1;
+  font: inherit;
+  color: var(--fg);
+  background: var(--panel);
+  border: 4px solid var(--border);
+  box-shadow: 4px 4px 0 var(--shadow);
+  padding: 10px 8px;
+  cursor: pointer;
+}
+.menu-btn::before { content: "　"; }
+.menu-btn.active { color: var(--accent); }
+.menu-btn.active::before { content: "▶ "; }
+.menu-btn:active { transform: translate(4px, 4px); box-shadow: none; }
+
+/* Tabs: hidden unless .active */
+.tab { display: none; }
+.tab.active { display: block; }
+
+/* Skill rows with stepped pixel bars */
+#skill-list { list-style: none; display: grid; gap: 14px; }
+.skill-name { display: flex; justify-content: space-between; }
+.skill-lv { color: var(--accent); }
+.bar {
+  height: 16px;
+  border: 2px solid var(--border);
+  background: var(--bg);
+  /* stepped fill = pixel feel: 10 cells drawn by repeating gradient */
+  background-image: repeating-linear-gradient(
+    to right, transparent 0, transparent 8%, var(--bg) 8%, var(--bg) 10%);
+}
+.bar-fill { height: 100%; background: var(--hp); width: 0; }
+.bar-fill.animate { transition: width 0.8s steps(10, end); }
+.skill-desc { color: var(--dim); font-size: 0.85rem; }
+
+/* Quest log (experience) */
+#quest-log { list-style: none; display: grid; gap: 14px; }
+.quest { border-bottom: 2px dashed var(--dim); padding-bottom: 10px; }
+.quest:last-child { border-bottom: none; }
+.quest-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px; }
+.quest-company { color: var(--accent); }
+.quest-period { color: var(--dim); font-size: 0.85rem; }
+.quest-role { font-size: 0.9rem; }
+.quest-desc { color: var(--dim); font-size: 0.85rem; }
+
+.contact a { color: var(--accent); }
+
+/* Narrow screens (375px baseline): stack menu, shrink paddings */
+@media (max-width: 480px) {
+  body { padding: 8px; }
+  .menu { flex-direction: column; }
+  h1 { font-size: 1.3rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor { animation: none; }
+  .bar-fill.animate { transition: none; }
+}
