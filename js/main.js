@@ -6,6 +6,9 @@
   const reducedMotion =
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  // 啟用 JS 模式：.win 先隱藏，之後依序開窗
+  document.body.classList.add("js");
+
   // --- Character panel ---
   document.getElementById("char-name").textContent = d.about.name;
   document.getElementById("char-level").textContent = "Lv." + d.about.level;
@@ -13,19 +16,34 @@
   document.getElementById("char-exp-text").textContent =
     d.about.level + " 年實務經驗｜" + d.about.location;
 
-  // --- Typewriter intro (instant when reduced motion) ---
+  // --- 開窗動畫：可見視窗依序展開（reduced motion 直接全開） ---
+  const visibleWins = () =>
+    Array.from(document.querySelectorAll(".win")).filter(
+      (w) => !w.classList.contains("tab") || w.classList.contains("active"));
+  if (reducedMotion) {
+    visibleWins().forEach((w) => w.classList.add("open"));
+  } else {
+    visibleWins().forEach((w, i) =>
+      setTimeout(() => w.classList.add("open"), 120 + i * 110));
+  }
+
+  // --- Typewriter（打字內容以 data.js 為準；HTML 內文字為 no-JS fallback） ---
   const intro = document.getElementById("intro-text");
-  const cursor = intro.querySelector(".cursor");
+  intro.textContent = "";
+  const cursor = document.createElement("span");
+  cursor.className = "cursor";
+  cursor.textContent = "▌";
+  intro.appendChild(cursor);
   function typewriter(text, i) {
     if (i > text.length) return;
     intro.insertBefore(
       document.createTextNode(text.charAt(i - 1) || ""), cursor);
-    setTimeout(() => typewriter(text, i + 1), 45);
+    setTimeout(() => typewriter(text, i + 1), 40);
   }
   if (reducedMotion) {
     intro.insertBefore(document.createTextNode(d.about.intro), cursor);
   } else {
-    typewriter(d.about.intro, 1);
+    setTimeout(() => typewriter(d.about.intro, 1), 500); // 等對話框開窗完
   }
 
   // --- Skills ---
@@ -43,7 +61,7 @@
     const bar = document.createElement("div");
     bar.className = "bar";
     const fill = document.createElement("div");
-    fill.className = "bar-fill animate";
+    fill.className = "bar-fill";
     fill.dataset.width = s.level * 10 + "%";
     bar.appendChild(fill);
     const desc = document.createElement("div");
@@ -53,12 +71,21 @@
     skillList.appendChild(li);
   });
 
-  // Animate bars after first paint so the width transition is visible
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    document.querySelectorAll(".bar-fill").forEach((f) => {
-      f.style.width = f.dataset.width;
-    });
-  }));
+  // --- 能力條進場：捲到可視範圍才填滿 ---
+  const fills = document.querySelectorAll("#skill-list .bar-fill");
+  if (reducedMotion || !("IntersectionObserver" in window)) {
+    fills.forEach((f) => { f.style.width = f.dataset.width; });
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting) {
+          en.target.style.width = en.target.dataset.width;
+          io.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    fills.forEach((f) => io.observe(f));
+  }
 
   // --- Experience (quest log) ---
   const log = document.getElementById("quest-log");
@@ -69,7 +96,7 @@
     head.className = "quest-head";
     const company = document.createElement("span");
     company.className = "quest-company";
-    company.textContent = "★ " + e.company;
+    company.textContent = e.company;
     const period = document.createElement("span");
     period.className = "quest-period";
     period.textContent = e.period;
@@ -79,34 +106,55 @@
     role.textContent = e.role;
     const desc = document.createElement("div");
     desc.className = "quest-desc";
-    desc.textContent = e.desc;
+    desc.textContent = "主線任務：" + e.desc;
     li.append(head, role, desc);
     log.appendChild(li);
   });
 
-  // --- Contact ---
+  // --- Contact（指令選單） ---
   const contact = document.getElementById("contact-links");
-  const mailLink = document.createElement("a");
-  mailLink.href = "mailto:" + d.contact.email;
-  mailLink.textContent = "✉ " + d.contact.email;
-  const sep = document.createTextNode("　｜　");
-  const linkedinLink = document.createElement("a");
-  linkedinLink.href = d.contact.linkedin;
-  linkedinLink.target = "_blank";
-  linkedinLink.rel = "noopener noreferrer";
-  linkedinLink.textContent = "LinkedIn ↗";
-  contact.append(mailLink, sep, linkedinLink);
+  function cmdItem(href, text, flavor, external) {
+    const li = document.createElement("li");
+    li.className = "cmd";
+    const a = document.createElement("a");
+    a.href = href;
+    a.textContent = text;
+    if (external) {
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+    }
+    const f = document.createElement("span");
+    f.className = "cmd-flavor";
+    f.textContent = flavor;
+    li.append(a, f);
+    return li;
+  }
+  contact.append(
+    cmdItem("mailto:" + d.contact.email, "Email", d.contact.emailFlavor, false),
+    cmdItem(d.contact.linkedin, "LinkedIn", d.contact.linkedinFlavor, true));
 
-  // --- Tab switching (game menu) ---
+  // --- 分頁切換：舊窗收合 → 新窗展開 ---
   const buttons = document.querySelectorAll(".menu-btn");
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
+      if (btn.classList.contains("active")) return;
       buttons.forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
-      document.querySelectorAll(".tab").forEach((t) =>
-        t.classList.remove("active"));
-      document.getElementById("tab-" + btn.dataset.tab)
-        .classList.add("active");
+      const current = document.querySelector(".tab.active");
+      const next = document.getElementById("tab-" + btn.dataset.tab);
+      const swap = () => {
+        current.classList.remove("active", "closing", "open");
+        next.classList.add("active");
+        next.classList.remove("open");
+        void next.offsetWidth; // 強制 reflow，重新觸發開窗動畫
+        next.classList.add("open");
+      };
+      if (reducedMotion) {
+        swap();
+      } else {
+        current.classList.add("closing");
+        setTimeout(swap, 170);
+      }
     });
   });
 })();
