@@ -1,0 +1,13 @@
+# 個資保護：履歷 PDF 絕不進公開 repo
+*.pdf
+
+# 內部工作檔（含設計文件片段與備份）
+backups/
+docs/superpowers/
+.scratch/local/
+
+# Claude Code 個人本機設定（不共享）
+.claude/settings.local.json
+
+# macOS
+.DS_Store
