@@ -8,9 +8,10 @@
 
   // --- Character panel ---
   document.getElementById("char-name").textContent = d.about.name;
+  document.getElementById("char-level").textContent = "Lv." + d.about.level;
   document.getElementById("char-title").textContent = d.about.title;
-  document.getElementById("char-meta").textContent =
-    "Lv." + d.about.level + "（年資）｜" + d.about.location;
+  document.getElementById("char-exp-text").textContent =
+    d.about.level + " 年實務經驗｜" + d.about.location;
 
   // --- Typewriter intro (instant when reduced motion) ---
   const intro = document.getElementById("intro-text");

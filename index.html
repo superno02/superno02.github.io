@@ -4,19 +4,32 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Ant — iOS App 開發工程師的個人履歷" />
+  <meta name="theme-color" content="#08080f" />
   <title>Ant — iOS App 開發工程師</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cubic+11&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <div class="frame">
-    <header class="panel char-panel">
-      <h1 id="char-name">Ant</h1>
+    <header class="win char-panel">
+      <div class="char-head">
+        <h1 id="char-name">Ant</h1>
+        <span id="char-level" class="accent">Lv.11</span>
+      </div>
       <p id="char-title">iOS App 開發工程師</p>
-      <p id="char-meta"><!-- Lv / location filled by main.js --></p>
+      <div class="exp-row">
+        <span class="win-label">EXP</span>
+        <span id="char-exp-text" class="dim-sm"></span>
+      </div>
+      <div class="bar"><div class="bar-fill exp-fill"></div></div>
     </header>
 
-    <section class="panel dialog" aria-label="自我介紹">
-      <p id="intro-text"><span class="cursor">▌</span></p>
+    <section class="win dialog" aria-label="自我介紹">
+      <p class="dialog-tag">— 系統訊息 —</p>
+      <!-- no-JS fallback：與 js/data.js about.intro 同文；update-content 改介紹時兩處同步 -->
+      <p id="intro-text">10 年以上 iOS 開發經驗，擅長 Swift 與 MVVM 架構，曾為兩間公司制定開發規範、建立共用模組加速團隊協作。重度遊戲愛好者——所以這份履歷長這樣。<span class="cursor">▌</span></p>
     </section>
 
     <nav class="menu" aria-label="分頁選單">
@@ -25,19 +38,19 @@
     </nav>
 
     <main>
-      <section id="tab-skills" class="panel tab active" aria-label="個人技能">
-        <h2>SKILLS</h2>
+      <section id="tab-skills" class="win tab active" aria-label="個人技能">
+        <h2 class="win-title">▚ SKILLS</h2>
         <ul id="skill-list"></ul>
       </section>
-      <section id="tab-experience" class="panel tab" aria-label="公司經歷">
-        <h2>QUEST LOG</h2>
+      <section id="tab-experience" class="win tab" aria-label="公司經歷">
+        <h2 class="win-title">▚ QUEST LOG</h2>
         <ol id="quest-log"></ol>
       </section>
     </main>
 
-    <footer class="panel contact">
-      <h2>CONTACT</h2>
-      <p id="contact-links"></p>
+    <footer class="win contact">
+      <h2 class="win-title">▚ CONTACT</h2>
+      <ul id="contact-links"></ul>
     </footer>
   </div>
 

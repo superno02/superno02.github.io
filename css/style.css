@@ -1,13 +1,18 @@
-/* Pixel RPG theme — dark palette, hard edges, no blur, no rounded corners */
+/* 幽藍魔導 Mystic Blue — 精緻像素 JRPG 藍窗主題
+   Design tokens 見 docs/superpowers/specs/2026-07-08-resume-redesign-mystic-blue-design.md */
 :root {
-  --bg: #1a1c2c;
-  --panel: #262b44;
-  --fg: #f4f4f4;
-  --dim: #a0a8c0;
-  --accent: #ffd866; /* gold */
-  --hp: #6ecb63;     /* green bars */
-  --border: #f4f4f4;
-  --shadow: #0f1020;
+  --bg: #08080f;
+  --win-top: #1a2480;
+  --win-bottom: #0c1250;
+  --border: #f0f0f8;
+  --border-glow: #6070d0;
+  --accent: #80e0ff;
+  --text: #f0f0f8;
+  --dim: #a0a8d8;
+  --bar-track: #060830;
+  --bar-border: #404880;
+  --off-border: #404880;
+  --off-text: #8890c0;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -15,92 +20,153 @@
 html { background: var(--bg); }
 
 body {
-  color: var(--fg);
-  /* monospace stack keeps the 8-bit feel without external fonts */
-  font-family: "Courier New", "Microsoft JhengHei", monospace;
-  line-height: 1.7;
-  image-rendering: pixelated;
+  color: var(--text);
+  font-family: "Cubic 11", "Courier New", "Microsoft JhengHei", monospace;
+  font-size: 16px;
+  line-height: 1.8;
   padding: 16px;
+  min-height: 100vh;
 }
+
+/* 星空背景：固定滿版、極輕微閃爍 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(1px 1px at 8% 15%, rgba(255,255,255,.55) 50%, transparent 50%),
+    radial-gradient(1px 1px at 50% 35%, rgba(255,255,255,.4) 50%, transparent 50%),
+    radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,.5) 50%, transparent 50%),
+    radial-gradient(1px 1px at 30% 65%, rgba(255,255,255,.35) 50%, transparent 50%),
+    radial-gradient(1px 1px at 90% 55%, rgba(255,255,255,.5) 50%, transparent 50%),
+    radial-gradient(1px 1px at 15% 90%, rgba(255,255,255,.4) 50%, transparent 50%),
+    radial-gradient(1px 1px at 65% 80%, rgba(255,255,255,.45) 50%, transparent 50%),
+    radial-gradient(2px 2px at 70% 25%, rgba(128,224,255,.35) 50%, transparent 50%),
+    radial-gradient(2px 2px at 25% 40%, rgba(128,224,255,.3) 50%, transparent 50%),
+    var(--bg);
+  animation: twinkle 4s ease-in-out infinite alternate;
+}
+@keyframes twinkle { from { opacity: .7; } to { opacity: 1; } }
 
 .frame { max-width: 720px; margin: 0 auto; display: grid; gap: 16px; }
 
-/* Pixel panel: double hard border + offset hard shadow */
-.panel {
-  background: var(--panel);
-  border: 4px solid var(--border);
-  outline: 4px solid var(--shadow);
-  box-shadow: 8px 8px 0 var(--shadow);
+/* ── 藍窗：漸層底＋白主框＋藍光暈外框 ── */
+.win {
+  background: linear-gradient(180deg, var(--win-top), var(--win-bottom));
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 4px var(--border-glow),
+    0 4px 16px rgba(64, 96, 255, .25);
   padding: 16px;
+  transform-origin: 50% 50%;
 }
 
-h1 { color: var(--accent); font-size: 1.6rem; letter-spacing: 2px; }
-h2 { color: var(--accent); font-size: 1rem; letter-spacing: 4px; margin-bottom: 12px; }
-#char-title { color: var(--fg); }
-#char-meta { color: var(--dim); font-size: 0.9rem; }
+/* JRPG 開窗：JS 啟動（body.js）後各窗先隱藏，加 .open 由中線展開 */
+body.js .win { transform: scaleY(0); }
+body.js .win.open { animation: win-open .28s steps(6, end) forwards; }
+body.js .win.closing { animation: win-close .16s steps(4, end) forwards; }
+@keyframes win-open  { from { transform: scaleY(.06); } to { transform: scaleY(1); } }
+@keyframes win-close { from { transform: scaleY(1); }  to { transform: scaleY(.06); } }
 
-/* Dialog box with blinking cursor, like an RPG text window */
-.dialog { min-height: 96px; }
-.cursor { animation: blink 1s steps(1) infinite; color: var(--accent); }
+/* ── 文字階層 ── */
+h1 {
+  font-size: 1.75rem;
+  letter-spacing: 3px;
+  text-shadow: 2px 2px 0 #000;
+}
+.accent { color: var(--accent); }
+.dim-sm { color: var(--dim); font-size: .85rem; }
+.win-title { color: var(--accent); font-size: 1rem; letter-spacing: 3px; margin-bottom: 12px; }
+.win-label { color: var(--accent); font-size: .8rem; letter-spacing: 1px; }
+#char-title { color: var(--dim); }
+.char-head { display: flex; justify-content: space-between; align-items: baseline; }
+.exp-row { display: flex; gap: 8px; align-items: baseline; margin-top: 6px; }
+
+/* ── 對話框 ── */
+.dialog { min-height: 110px; }
+.dialog-tag { color: var(--accent); font-size: .8rem; letter-spacing: 2px; margin-bottom: 4px; }
+.cursor { color: var(--accent); animation: blink 1s steps(1) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 
-/* Menu buttons — game menu look, ▶ marker on the active one */
-.menu { display: flex; gap: 12px; }
+/* ── 分頁選單 ── */
+.menu { display: flex; gap: 10px; }
 .menu-btn {
   flex: 1;
   font: inherit;
-  color: var(--fg);
-  background: var(--panel);
-  border: 4px solid var(--border);
-  box-shadow: 4px 4px 0 var(--shadow);
+  color: var(--off-text);
+  background: transparent;
+  border: 2px solid var(--off-border);
+  border-radius: 6px;
   padding: 10px 8px;
   cursor: pointer;
 }
-.menu-btn::before { content: "　"; }
-.menu-btn.active { color: var(--accent); }
-.menu-btn.active::before { content: "▶ "; }
-.menu-btn:active { transform: translate(4px, 4px); box-shadow: none; }
+.menu-btn::before { content: "▶ "; color: var(--accent); opacity: 0; }
+.menu-btn:hover::before { opacity: .45; }
+.menu-btn.active {
+  color: var(--text);
+  background: linear-gradient(180deg, #2030a0, #101860);
+  border-color: var(--border);
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--border-glow);
+}
+.menu-btn.active::before { opacity: 1; }
+/* 按下閃白一格＝8-bit 選擇音效的視覺版 */
+.menu-btn:active { filter: brightness(2); }
 
-/* Tabs: hidden unless .active */
+/* ── 分頁內容 ── */
 .tab { display: none; }
 .tab.active { display: block; }
 
-/* Skill rows with stepped pixel bars */
-#skill-list { list-style: none; display: grid; gap: 14px; }
-.skill-name { display: flex; justify-content: space-between; }
-.skill-lv { color: var(--accent); }
+/* ── 技能列＋能力條 ── */
+#skill-list { list-style: none; display: grid; gap: 12px; }
+.skill-name { display: flex; justify-content: space-between; align-items: baseline; }
+.skill-lv { color: var(--accent); font-size: .85rem; }
+.skill-desc { color: var(--dim); font-size: .85rem; }
 .bar {
-  height: 16px;
-  border: 2px solid var(--border);
-  background: var(--bg);
-  /* stepped fill = pixel feel: 10 cells drawn by repeating gradient */
-  background-image: repeating-linear-gradient(
-    to right, transparent 0, transparent 8%, var(--bg) 8%, var(--bg) 10%);
+  height: 12px;
+  background: var(--bar-track);
+  border: 1px solid var(--bar-border);
+  margin-top: 4px;
 }
-.bar-fill { height: 100%; background: var(--hp); width: 0; }
-.bar-fill.animate { transition: width 0.8s steps(10, end); }
-.skill-desc { color: var(--dim); font-size: 0.85rem; }
+.bar-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #30a0e0, #80e8ff);
+  box-shadow: 0 0 6px rgba(128, 232, 255, .5);
+  transition: width .9s steps(12, end);
+}
+.exp-fill { width: 100%; transition: none; }
 
-/* Quest log (experience) */
+/* ── QUEST LOG ── */
 #quest-log { list-style: none; display: grid; gap: 14px; }
-.quest { border-bottom: 2px dashed var(--dim); padding-bottom: 10px; }
-.quest:last-child { border-bottom: none; }
+.quest { border-left: 3px solid var(--accent); padding-left: 12px; }
 .quest-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px; }
-.quest-company { color: var(--accent); }
-.quest-period { color: var(--dim); font-size: 0.85rem; }
-.quest-role { font-size: 0.9rem; }
-.quest-desc { color: var(--dim); font-size: 0.85rem; }
+.quest-company { color: var(--text); }
+.quest-period { color: var(--accent); font-size: .85rem; }
+.quest-role { font-size: .9rem; }
+.quest-desc { color: var(--dim); font-size: .85rem; }
 
-.contact a { color: var(--accent); }
+/* ── CONTACT 指令選單 ── */
+#contact-links { list-style: none; display: grid; gap: 8px; }
+.cmd a { color: var(--text); text-decoration: none; }
+.cmd a::before { content: "▶ "; color: var(--accent); opacity: .3; }
+.cmd a:hover::before, .cmd a:focus::before { opacity: 1; }
+.cmd a:hover, .cmd a:focus { color: var(--accent); }
+.cmd .cmd-flavor { color: var(--dim); font-size: .8rem; margin-left: 8px; }
 
-/* Narrow screens (375px baseline): stack menu, shrink paddings */
+/* ── 響應式（375px 基準） ── */
 @media (max-width: 480px) {
-  body { padding: 8px; }
-  .menu { flex-direction: column; }
-  h1 { font-size: 1.3rem; }
+  body { padding: 10px; }
+  h1 { font-size: 1.4rem; }
 }
 
+/* ── 動作減量：直接顯示最終狀態 ── */
 @media (prefers-reduced-motion: reduce) {
+  body::before { animation: none; }
   .cursor { animation: none; }
-  .bar-fill.animate { transition: none; }
+  .bar-fill { transition: none; }
+  body.js .win { transform: none; }
+  body.js .win.open, body.js .win.closing { animation: none; }
 }
