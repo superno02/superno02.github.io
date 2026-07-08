@@ -135,17 +135,19 @@
 
   // --- 分頁切換：舊窗收合 → 新窗展開 ---
   const buttons = document.querySelectorAll(".menu-btn");
+  const tabs = document.querySelectorAll(".tab");
+  let tabTimer = null;
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
       if (btn.classList.contains("active")) return;
       buttons.forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
+      clearTimeout(tabTimer); // 丟棄前一次未完成的切換，避免雙 active
       const current = document.querySelector(".tab.active");
       const next = document.getElementById("tab-" + btn.dataset.tab);
       const swap = () => {
-        current.classList.remove("active", "closing", "open");
+        tabs.forEach((t) => t.classList.remove("active", "closing", "open"));
         next.classList.add("active");
-        next.classList.remove("open");
         void next.offsetWidth; // 強制 reflow，重新觸發開窗動畫
         next.classList.add("open");
       };
@@ -153,7 +155,7 @@
         swap();
       } else {
         current.classList.add("closing");
-        setTimeout(swap, 170);
+        tabTimer = setTimeout(swap, 170);
       }
     });
   });
